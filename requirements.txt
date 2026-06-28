@@ -1,0 +1,16 @@
+# Web Framework / UI
+streamlit>=1.35.0
+
+# Multi-Agent & Orchestration Framework
+langgraph>=0.0.10
+pydantic>=2.0.0
+
+# LLM Framework & Google Gemini Integration
+langchain-core>=0.2.0
+langchain-google-genai>=1.0.5
+python-dotenv>=1.0.1
+
+# YouTube Scraping / Transcript API
+youtube-transcript-api>=0.6.2
+
+reportlab>=4.1.0
