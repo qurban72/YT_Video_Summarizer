@@ -1,7 +1,7 @@
 # src/graph.py
 from langgraph.graph import StateGraph, START, END
-from .state import GraphState
-from .nodes import extract_video_id, extract_transcript, generate_pdf_notes
+from state import GraphState
+from nodes import extract_video_id, extract_transcript, generate_pdf_notes
 
 builder = StateGraph(GraphState)
 
