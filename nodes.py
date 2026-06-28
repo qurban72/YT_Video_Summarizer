@@ -8,7 +8,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
-from .state import GraphState
+from state import GraphState
 from dotenv import load_dotenv
 load_dotenv()
 # Gemini Flash-Lite configuration with precise safety parameters
