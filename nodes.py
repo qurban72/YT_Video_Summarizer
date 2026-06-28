@@ -65,42 +65,42 @@ def generate_pdf_notes(state: GraphState):
         chain = template | llm
         response = chain.invoke({"transcript": state.transcript})
         
-        # --- Flash-Lite Content Extraction Engine ---
+        # --- Flash-Lite Safe String Casting Engine (Fixes 'expected str instance, int found') ---
         content = ""
         
-        # 1. Base String Check
         if isinstance(response, str):
             content = response
             
-        # 2. LangChain BaseMessage/AIMessage Check (Most Common)
         elif hasattr(response, 'content'):
-            # Kuch packages me .content direct string hota hai, kuch me list of dicts
             if isinstance(response.content, list):
-                # Element items ko extract karne ka shortcut loop
-                content = "\n".join([str(item.get('text', item)) if isinstance(item, dict) else str(item) for item in response.content])
+                # Har item ko explicitly str() me wrap karna zaroori hai sequence error se bachne k liye
+                extracted_lines = []
+                for item in response.content:
+                    if isinstance(item, dict):
+                        extracted_lines.append(str(item.get('text', '')))
+                    else:
+                        extracted_lines.append(str(item))
+                content = "\n".join(extracted_lines)
             else:
                 content = str(response.content)
                 
-        # 3. Direct List/Stream Chunk Type Handle
         elif isinstance(response, list):
             extracted_chunks = []
             for item in response:
                 if hasattr(item, 'content'):
                     extracted_chunks.append(str(item.content))
-                elif isinstance(item, dict) and 'text' in item:
-                    extracted_chunks.append(str(item['text']))
+                elif isinstance(item, dict):
+                    extracted_chunks.append(str(item.get('text', '')))
                 else:
-                    extracted_chunks.append(str(item))
+                    extracted_chunks.append(str(item)) # Converts int, float, or object safely
             content = "\n".join(extracted_chunks)
             
-        # 4. Fallback Default Object Cast
         else:
             content = str(response)
 
-        # Double check ke content crash string na ho aur cleanup rules optimize hon
         content = content.strip()
         if not content:
-            return {"error_message": "Gemini generated an empty text output. Please verify prompt formatting."}
+            return {"error_message": "Gemini generated an empty text output."}
 
         # --- ReportLab PDF Generation Logic ---
         pdf_filename = f"notes_{state.video_id}.pdf"
@@ -136,13 +136,12 @@ def generate_pdf_notes(state: GraphState):
         story.append(Spacer(1, 10))
         story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor('#E5E7EB'), spaceAfter=15))
         
-        # Ab string validation pass hone ki wajah se execution 100% stable chalegi
+        # Ab join string datatype strict validation pass ho chuki hai
         lines = content.split('\n')
         for line in lines:
             line = line.strip()
             if not line: continue
             
-            # Inline formatting adjustments
             line = line.replace('**', '<b>', 1).replace('**', '</b>', 1)
             line = re.sub(r'^\*+\s*', '• ', line)
             
