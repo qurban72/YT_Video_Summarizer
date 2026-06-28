@@ -2,7 +2,7 @@
 import streamlit as st
 import os
 from dotenv import load_dotenv
-from src.state.graph import study_agent_graph
+from state.graph import study_agent_graph
 
 st.set_page_config(page_title="PDF Study Notes Generator", page_icon="📄", layout="centered")
 load_dotenv()
