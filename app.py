@@ -1,11 +1,12 @@
 # app.py
 import streamlit as st
 import os
+load_dotenv()
+
 from dotenv import load_dotenv
 from graph import study_agent_graph
 
 st.set_page_config(page_title="PDF Study Notes Generator", page_icon="📄", layout="centered")
-load_dotenv()
 
 st.title("📄 YouTube PDF Notes Generator")
 st.write("Convert any technical or educational video into a beautifully formatted PDF study guide.")
